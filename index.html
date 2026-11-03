@@ -1,0 +1,1390 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="light">
+<meta name="theme-color" content="#1E6B45">
+<meta name="robots" content="noindex">
+<title>Tropen im Einkaufswagen – Das große Abschluss-Quiz</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%8C%B4%3C/text%3E%3C/svg%3E">
+<style>
+:root{
+  --green:#1E6B45; --green-d:#14502F; --green-l:#E3F1E8;
+  --cocoa:#6B3F24; --banana:#F4C430; --banana-l:#FFF4CC;
+  --bg:#FBF6EC; --card:#FFFFFF; --ink:#2A2118; --muted:#6E6257; --line:#E8DFD0;
+  --ok:#23894F; --ok-l:#E2F4E8; --bad:#D4502F; --bad-l:#FCE7E1;
+  --accent:#1E6B45; --accent-ink:#FFFFFF; --accent-l:#E3F1E8;
+  --radius:24px;
+  --shadow:0 10px 30px rgba(74,52,30,.10), 0 2px 6px rgba(74,52,30,.06);
+  font-family: ui-rounded, "SF Pro Rounded", system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--ink);
+  font-size:20px; line-height:1.45;
+  min-height:100vh; min-height:100dvh;
+  -webkit-tap-highlight-color:transparent;
+}
+button{font:inherit; color:inherit; touch-action:manipulation; cursor:pointer}
+button:disabled{cursor:default}
+:focus-visible{outline:4px solid #1F7FA6; outline-offset:3px}
+
+/* Deko-Blätter */
+.deco{position:fixed; pointer-events:none; z-index:0; opacity:.16}
+.deco.tl{top:-30px; left:-40px; width:230px; transform:rotate(-10deg)}
+.deco.br{bottom:-40px; right:-40px; width:260px; transform:rotate(170deg)}
+
+/* Kopfleiste */
+.topbar{
+  position:sticky; top:0; z-index:5;
+  background:rgba(251,246,236,.94);
+  -webkit-backdrop-filter:blur(8px); backdrop-filter:blur(8px);
+  padding:12px 20px 10px; padding-top:max(12px, env(safe-area-inset-top));
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{max-width:860px; margin:0 auto; display:flex; align-items:center; gap:16px}
+.progress{flex:1; height:16px; background:#EDE4D3; border-radius:99px; overflow:hidden}
+.progress > div{height:100%; width:0; background:var(--accent); border-radius:99px; transition:width .5s ease, background .3s}
+.progress-label{font-size:16px; color:var(--muted); white-space:nowrap; min-width:92px; text-align:right}
+.score-pill{
+  background:var(--banana-l); border:2px solid var(--banana); border-radius:99px;
+  padding:4px 14px; font-weight:700; font-size:18px; white-space:nowrap;
+}
+.score-pill.bump{animation:bump .5s ease}
+.hidden{display:none !important}
+
+main{position:relative; z-index:1; max-width:860px; margin:0 auto; padding:24px 20px 48px}
+.card{
+  background:var(--card); border-radius:var(--radius); box-shadow:var(--shadow);
+  padding:32px 32px 28px; animation:slideIn .35s ease both;
+}
+@media (max-width:600px){ .card{padding:24px 18px 22px} main{padding:16px 12px 40px} body{font-size:19px} }
+
+/* Startbildschirm */
+.start{text-align:center; padding-top:36px}
+.start h1{font-size:40px; line-height:1.15; margin:8px 0 6px; color:var(--green-d); letter-spacing:-.5px}
+.start h1 span{display:block; font-size:26px; color:var(--cocoa); font-weight:700; margin-top:8px; letter-spacing:0}
+.start p{max-width:560px; margin:14px auto; color:var(--ink)}
+.hero{width:min(340px, 80%); height:auto; display:block; margin:0 auto}
+.facts{display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin:18px 0 26px}
+.facts span{background:var(--green-l); color:var(--green-d); border-radius:99px; padding:6px 16px; font-size:17px; font-weight:600}
+
+/* Buttons */
+.btn{
+  display:inline-flex; align-items:center; justify-content:center; gap:10px;
+  min-height:64px; padding:14px 34px; border:none; border-radius:20px;
+  background:var(--accent); color:var(--accent-ink); font-size:22px; font-weight:700;
+  box-shadow:0 5px 0 rgba(0,0,0,.18); transition:transform .1s, box-shadow .1s, opacity .2s;
+}
+.btn:active:not(:disabled){transform:translateY(3px); box-shadow:0 2px 0 rgba(0,0,0,.18)}
+.btn:disabled{opacity:.4; box-shadow:none}
+.btn.big{min-width:260px; font-size:24px}
+.btn.green{background:var(--green); color:#fff}
+.btn.light{background:#fff; color:var(--ink); border:3px solid var(--line); box-shadow:0 5px 0 var(--line)}
+.btn-row{display:flex; flex-wrap:wrap; justify-content:center; gap:16px; margin-top:26px}
+
+/* Fragen-Kopf */
+.qhead{display:flex; flex-wrap:wrap; align-items:center; gap:10px; margin-bottom:18px}
+.chip{
+  display:inline-flex; align-items:center; gap:6px; border-radius:99px;
+  padding:6px 14px; font-size:16px; font-weight:700;
+}
+.chip.round{background:var(--accent); color:var(--accent-ink)}
+.chip.sheet{background:#fff; border:2px dashed var(--accent); color:var(--ink)}
+.chip.num{background:#F3EDE2; color:var(--muted); margin-left:auto}
+.tools{display:flex; gap:12px; margin:0 0 6px}
+.tool{
+  display:inline-flex; align-items:center; gap:8px; min-height:52px; padding:8px 18px;
+  border-radius:16px; border:2px solid var(--line); background:#fff; font-size:18px; font-weight:600;
+}
+.tool[aria-pressed="true"]{background:var(--banana-l); border-color:var(--banana)}
+.tool .ico{font-size:24px; line-height:1}
+.lead{font-size:19px; font-weight:700; color:var(--accent-text, var(--accent)); margin:14px 0 2px}
+.qtext{font-size:27px; line-height:1.3; font-weight:700; margin:4px 0 12px}
+@media (max-width:600px){ .qtext{font-size:23px} }
+.term{
+  display:flex; gap:10px; align-items:flex-start;
+  background:#F4F8FB; border-left:6px solid #1F7FA6; border-radius:12px;
+  padding:10px 14px; font-size:18px; margin:6px 0 10px;
+}
+.term b{white-space:nowrap}
+.hintbox{
+  display:flex; gap:12px; align-items:flex-start; background:var(--banana-l);
+  border:2px solid var(--banana); border-radius:16px; padding:12px 16px; margin:8px 0 12px;
+  animation:pop .3s ease;
+}
+.hintbox .ico{font-size:28px; line-height:1}
+.body{margin-top:18px}
+
+/* Antwort-Optionen */
+.opts{display:grid; gap:14px}
+@media (min-width:640px){ .opts.two{grid-template-columns:1fr 1fr} }
+.opt{
+  display:flex; align-items:center; gap:14px; text-align:left;
+  min-height:72px; padding:14px 18px; border-radius:18px;
+  background:#fff; border:3px solid var(--line); font-size:21px; font-weight:600;
+  box-shadow:0 4px 0 var(--line); transition:transform .1s, border-color .2s, background .2s;
+}
+.opt:active:not(:disabled){transform:translateY(2px); box-shadow:0 2px 0 var(--line)}
+.opt .letter{
+  flex:none; width:40px; height:40px; border-radius:12px; display:grid; place-items:center;
+  background:var(--accent-l); color:var(--accent-text, var(--accent)); font-weight:800; font-size:19px;
+}
+.opt .em{font-size:30px; line-height:1; flex:none}
+.opt.sel{border-color:var(--accent); background:var(--accent-l); box-shadow:0 4px 0 var(--accent)}
+.opt.sel .letter{background:var(--accent); color:var(--accent-ink)}
+.opt.ok{border-color:var(--ok); background:var(--ok-l); box-shadow:0 4px 0 var(--ok); animation:pop .4s ease}
+.opt.ok .letter{background:var(--ok); color:#fff}
+.opt.bad{border-color:var(--bad); background:var(--bad-l); box-shadow:0 4px 0 var(--bad); animation:shake .4s ease}
+.opt.bad .letter{background:var(--bad); color:#fff}
+.opt.miss{border-color:var(--ok); border-style:dashed}
+.opt:disabled{cursor:default}
+.opt .check{margin-left:auto; flex:none; width:32px; height:32px; border-radius:10px; border:3px solid var(--line); display:grid; place-items:center; font-size:18px; color:transparent}
+.opt.sel .check{background:var(--accent); border-color:var(--accent); color:var(--accent-ink)}
+.opt.ok .check{background:var(--ok); border-color:var(--ok); color:#fff}
+.opt.bad .check{background:var(--bad); border-color:var(--bad); color:#fff}
+.tf .opt{justify-content:center; font-size:26px; min-height:96px}
+.tf .opt .em{font-size:36px}
+
+/* Detektiv */
+.detect-wrap{display:grid; gap:18px}
+@media (min-width:700px){ .detect-wrap{grid-template-columns:1fr 1fr} }
+.pack{
+  border:3px solid #CDBFA9; border-radius:18px; background:#FFFDF7; overflow:hidden;
+}
+.pack-head{display:flex; align-items:center; gap:10px; background:#F3EADA; padding:10px 16px; font-weight:800}
+.pack-head .em{font-size:30px}
+.pack-body{padding:12px 14px 16px}
+.pack-body small{display:block; color:var(--muted); font-size:15px; margin-bottom:8px; text-transform:uppercase; letter-spacing:.5px; font-weight:700}
+.ingr{display:flex; flex-wrap:wrap; gap:10px}
+.ingr .opt{min-height:56px; padding:8px 14px; font-size:19px; border-radius:14px}
+.example-note{font-size:16px; color:var(--muted); margin:10px 0 0; text-align:center}
+
+/* Zuordnen */
+.pool{
+  display:flex; flex-wrap:wrap; gap:12px; justify-content:center; min-height:84px;
+  padding:14px; border-radius:18px; background:#F7F1E6; border:2px dashed #DCCFB8; margin-bottom:18px;
+}
+.pool.empty::after{content:"Alle Karten sind verteilt ✔"; color:var(--muted); font-size:17px; align-self:center}
+.mcard{
+  display:inline-flex; align-items:center; gap:10px; min-height:60px; padding:10px 16px;
+  border-radius:16px; background:#fff; border:3px solid var(--line); box-shadow:0 4px 0 var(--line);
+  font-size:19px; font-weight:600; text-align:left; max-width:100%;
+}
+.mcard .em{font-size:28px; line-height:1}
+.mcard.sel{border-color:var(--accent); background:var(--accent-l); box-shadow:0 4px 0 var(--accent); transform:translateY(-3px) scale(1.03)}
+.mcard.ok{border-color:var(--ok); background:var(--ok-l); box-shadow:0 4px 0 var(--ok)}
+.mcard.bad{border-color:var(--bad); background:var(--bad-l); box-shadow:0 4px 0 var(--bad); animation:shake .4s ease}
+.mcard.fixed{border-style:dashed}
+.targets{display:grid; grid-template-columns:1fr 1fr; gap:16px}
+@media (max-width:560px){ .targets{grid-template-columns:1fr} }
+.target{
+  display:flex; flex-direction:column; gap:10px; align-items:stretch;
+  min-height:200px; padding:14px; border-radius:20px; text-align:left;
+  background:#fff; border:3px dashed var(--accent); transition:background .2s, transform .15s;
+}
+.target.ready{background:var(--accent-l); border-style:solid; animation:glow 1.4s ease infinite}
+.target-title{display:flex; align-items:center; gap:10px; font-weight:800; font-size:21px; padding-bottom:6px; border-bottom:2px solid var(--line)}
+.target-title .em{font-size:32px; line-height:1}
+.target .mcard{width:100%}
+.howto{font-size:17px; color:var(--muted); text-align:center; margin:-4px 0 12px}
+
+/* Lückentext */
+.gaptext{font-size:24px; line-height:2.3; background:#FFFDF7; border:2px solid var(--line); border-radius:18px; padding:16px 20px}
+.gap{
+  display:inline-flex; align-items:center; justify-content:center; min-width:140px; min-height:50px;
+  padding:4px 14px; margin:0 4px; vertical-align:middle; line-height:1.2;
+  border-radius:12px; border:3px dashed #BFAF95; background:#fff; font-size:22px; font-weight:700; color:var(--ink);
+}
+.gap.active{border-color:var(--accent); border-style:solid; background:var(--accent-l); animation:glow 1.4s ease infinite}
+.gap.filled{border-style:solid; border-color:var(--accent)}
+.gap.ok{border-color:var(--ok); background:var(--ok-l); border-style:solid}
+.gap.bad{border-color:var(--bad); background:var(--bad-l); border-style:solid; animation:shake .4s ease}
+.bank{display:flex; flex-wrap:wrap; gap:12px; justify-content:center; margin-top:18px}
+.bank .mcard{font-size:21px; min-width:110px; justify-content:center}
+.bank .mcard.used{opacity:.25; box-shadow:none}
+
+/* Meinung */
+.proscons{display:grid; gap:16px; margin-top:20px; animation:slideIn .4s ease both}
+@media (min-width:640px){ .proscons{grid-template-columns:1fr 1fr} }
+.pc{border-radius:18px; padding:16px 18px}
+.pc h3{margin:0 0 8px; font-size:20px}
+.pc ul{margin:0; padding-left:22px}
+.pc li{margin:6px 0; font-size:19px}
+.pc.pro{background:var(--ok-l); border:2px solid #9ED3B2}
+.pc.con{background:#FFF1E2; border:2px solid #F0C08F}
+
+/* Rückmeldung */
+.actions{display:flex; justify-content:center; margin-top:24px}
+.feedback{
+  display:flex; gap:14px; align-items:flex-start; border-radius:18px; padding:16px 18px; margin-top:22px;
+  animation:pop .35s ease;
+}
+.feedback .big{font-size:36px; line-height:1}
+.feedback h3{margin:0 0 4px; font-size:22px}
+.feedback p{margin:0; font-size:19px}
+.feedback.ok{background:var(--ok-l); border:3px solid var(--ok)}
+.feedback.retry{background:var(--banana-l); border:3px solid var(--banana)}
+.feedback.sol{background:#FFF1E2; border:3px solid #E59A4E}
+.feedback.neutral{background:#F4F8FB; border:3px solid #1F7FA6}
+.feedback .say{margin-left:auto; flex:none; min-height:48px; padding:6px 12px; font-size:22px; border-radius:14px; border:2px solid rgba(0,0,0,.12); background:#fff}
+.plus{
+  position:fixed; z-index:20; font-size:34px; font-weight:800; color:var(--ok);
+  pointer-events:none; animation:floatUp 1s ease forwards;
+}
+
+/* Runden-Screens */
+.center{text-align:center}
+.round-emoji{font-size:84px; line-height:1.1; margin:6px 0 4px; animation:pop .5s ease}
+.round-kicker{font-weight:800; color:var(--muted); letter-spacing:1px; text-transform:uppercase; font-size:16px}
+.round-title{font-size:34px; line-height:1.2; margin:6px 0 12px; color:var(--ink)}
+.round-intro{max-width:560px; margin:10px auto 0}
+.meta{color:var(--muted); font-size:18px; margin-top:12px}
+.stat{
+  display:inline-flex; flex-direction:column; align-items:center; gap:2px; min-width:200px;
+  padding:16px 26px; border-radius:20px; background:var(--accent-l); margin:12px 8px 0;
+}
+.stat b{font-size:40px; line-height:1.1; color:var(--accent-text, var(--accent))}
+.stat span{font-size:17px; color:var(--muted)}
+.motiv{font-size:22px; font-weight:700; margin:20px auto 0; max-width:560px}
+
+/* Ergebnis */
+.stars{display:flex; justify-content:center; gap:10px; margin:10px 0}
+.stars svg{width:72px; height:72px}
+.stars svg.on{animation:starIn .6s ease both}
+.stars svg:nth-child(2){animation-delay:.2s}
+.stars svg:nth-child(3){animation-delay:.4s}
+.badge{width:170px; height:auto; display:block; margin:6px auto 0; animation:pop .6s ease}
+.badge-name{font-size:30px; font-weight:800; color:var(--green-d); margin:4px 0 0}
+.teacher{
+  display:flex; align-items:center; justify-content:center; gap:12px; margin:22px auto 0; max-width:520px;
+  background:var(--banana-l); border:3px solid var(--banana); border-radius:18px; padding:14px 18px; font-weight:700; font-size:21px;
+}
+.teacher .em{font-size:32px}
+.takeaway-done{margin-top:18px; font-size:20px; color:var(--green-d); font-weight:700}
+
+/* Konfetti */
+.confetti{position:fixed; top:-20px; width:12px; height:18px; z-index:30; pointer-events:none; border-radius:3px; animation:fall linear forwards}
+
+@keyframes slideIn{from{opacity:0; transform:translateY(14px)} to{opacity:1; transform:none}}
+@keyframes pop{0%{transform:scale(.92)} 60%{transform:scale(1.03)} 100%{transform:scale(1)}}
+@keyframes shake{0%,100%{transform:translateX(0)} 25%{transform:translateX(-7px)} 75%{transform:translateX(7px)}}
+@keyframes bump{0%,100%{transform:scale(1)} 50%{transform:scale(1.18)}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(0,0,0,0)} 50%{box-shadow:0 0 0 6px var(--accent-l)}}
+@keyframes floatUp{from{opacity:1; transform:translateY(0)} to{opacity:0; transform:translateY(-70px)}}
+@keyframes starIn{0%{opacity:0; transform:scale(.3) rotate(-30deg)} 70%{transform:scale(1.15)} 100%{opacity:1; transform:none}}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media (prefers-reduced-motion: reduce){
+  *, *::before, *::after{animation:none !important; transition:none !important}
+}
+.sr{position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+
+<!-- Deko: Palmblätter (eigene SVG) -->
+<svg class="deco tl" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="#1E6B45">
+    <path d="M20 180 Q90 120 180 20 Q120 110 20 180Z"/>
+    <path d="M60 140 Q40 100 50 60 Q70 110 72 132Z"/><path d="M90 112 Q70 72 82 34 Q102 84 100 104Z"/>
+    <path d="M120 84 Q104 52 116 18 Q134 60 128 78Z"/><path d="M64 136 Q104 136 140 152 Q96 154 66 140Z"/>
+    <path d="M94 108 Q134 106 168 118 Q126 124 96 112Z"/><path d="M124 80 Q156 76 186 84 Q152 92 126 84Z"/>
+  </g>
+</svg>
+<svg class="deco br" viewBox="0 0 200 200" aria-hidden="true">
+  <g fill="#6B3F24">
+    <path d="M20 180 Q90 120 180 20 Q120 110 20 180Z"/>
+    <path d="M60 140 Q40 100 50 60 Q70 110 72 132Z"/><path d="M90 112 Q70 72 82 34 Q102 84 100 104Z"/>
+    <path d="M64 136 Q104 136 140 152 Q96 154 66 140Z"/><path d="M94 108 Q134 106 168 118 Q126 124 96 112Z"/>
+  </g>
+</svg>
+
+<header class="topbar hidden" id="topbar">
+  <div class="topbar-inner">
+    <div class="progress" role="progressbar" aria-label="Fortschritt" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" id="progress"><div id="progressFill"></div></div>
+    <div class="progress-label" id="progressLabel"></div>
+    <div class="score-pill" id="scorePill" aria-live="polite">⭐ 0</div>
+  </div>
+</header>
+
+<main id="app"></main>
+<div class="sr" aria-live="polite" id="live"></div>
+
+<script>
+"use strict";
+
+/* =========================================================
+   INHALTE – alle Fakten stammen aus dem Arbeitsblatt der Reihe
+   ========================================================= */
+var ROUNDS = [
+  {
+    id: 1, title: "Tropen im Einkaufswagen", emoji: "🛒",
+    color: "#E3A500", ink: "#2A2118", light: "#FFF3CC", text: "#8A5A00",
+    intro: "Auf dem Arbeitsblatt hast du überlegt: Was haben Schokolade, Kekse und Seife mit den Tropen zu tun?",
+    questions: [
+      {
+        id: "r1q1", type: "mc", lead: "Erinnerst du dich?",
+        q: "Die Leitfrage auf dem Arbeitsblatt war: Was haben Schokolade, Kekse und Seife mit den Tropen zu tun?",
+        term: ["Tropen", "ein Gebiet rund um die Mitte der Erde. Dort ist es das ganze Jahr warm."],
+        options: [
+          { t: "Sie werden nur in den Tropen verkauft." },
+          { t: "In ihnen stecken Zutaten aus den Tropen, zum Beispiel Kakao oder Palmöl.", ok: true },
+          { t: "Sie werden alle aus Äpfeln gemacht." },
+          { t: "Gar nichts. Alles kommt aus Deutschland." }
+        ],
+        hint: "Denk an die Zutaten. Woraus wird Schokolade gemacht?",
+        explain: "Schokolade wird aus Kakao gemacht. In Keksen und Seife kann Palmöl stecken. Kakao und Ölpalmen wachsen in den Tropen."
+      },
+      {
+        id: "r1q2", type: "match", lead: "Auf dem Arbeitsblatt hast du Lebensmittel sortiert.",
+        q: "Wo wachsen sie? Ordne zu.",
+        targets: [
+          { id: "T", label: "Wächst in den Tropen", em: "🌴" },
+          { id: "D", label: "Wächst auch bei uns in Deutschland", em: "🏡" }
+        ],
+        items: [
+          { t: "Banane", em: "🍌", to: "T" },
+          { t: "Apfel", em: "🍎", to: "D" },
+          { t: "Kakao", em: "🍫", to: "T" },
+          { t: "Kaffee", em: "☕", to: "T" },
+          { t: "Kartoffel", em: "🥔", to: "D" },
+          { t: "Ananas", em: "🍍", to: "T" }
+        ],
+        hint: "Zwei Pflanzen findest du auch auf Feldern und in Gärten in Deutschland.",
+        explain: "Banane, Kakao, Kaffee und Ananas wachsen in den Tropen. Äpfel und Kartoffeln wachsen auch bei uns in Deutschland."
+      },
+      {
+        id: "r1q3", type: "mc", two: true,
+        q: "Welche Pflanze aus den Tropen braucht man für Schokolade?",
+        options: [
+          { t: "Kartoffel", em: "🥔" },
+          { t: "Ananas", em: "🍍" },
+          { t: "Apfel", em: "🍎" },
+          { t: "Kakao", em: "🍫", ok: true }
+        ],
+        hint: "Diese Pflanze hat Bohnen. Aus den Bohnen wird Schokolade gemacht.",
+        explain: "Schokolade wird aus Kakaobohnen gemacht. Kakao wächst in den Tropen."
+      },
+      {
+        id: "r1q4", type: "tf",
+        q: "Äpfel wachsen nur in den Tropen.",
+        answer: false,
+        hint: "Schau auf deine Sortierung vom Arbeitsblatt: Wo lag der Apfel?",
+        explain: "Falsch. Äpfel wachsen auch bei uns in Deutschland. Sie müssen nicht aus den Tropen kommen."
+      }
+    ]
+  },
+  {
+    id: 2, title: "Plantage oder Kleinbauern?", emoji: "🌴👨‍👩‍👧",
+    color: "#2E8B57", ink: "#FFFFFF", light: "#E2F2E8", text: "#1F6B42",
+    intro: "Auf dem Arbeitsblatt hast du zwei Arten von Landwirtschaft kennengelernt: die Plantage und die Kleinbauern.",
+    questions: [
+      {
+        id: "r2q1", type: "match", lead: "Auf dem Arbeitsblatt hast du Plantage und Kleinbauern verglichen.",
+        q: "Was passt zur Plantage, was zu den Kleinbauern?",
+        term: ["Plantage", "ein sehr großer Landwirtschafts-Betrieb. Kleinbauern sind Bauernfamilien mit wenig Land."],
+        targets: [
+          { id: "P", label: "Plantage", em: "🏭" },
+          { id: "K", label: "Kleinbauern", em: "👨‍👩‍👧" }
+        ],
+        items: [
+          { t: "riesige Felder", em: "🌾", to: "P" },
+          { t: "kleines Feld", em: "🌱", to: "K" },
+          { t: "nur eine Pflanzenart", em: "🌴", to: "P" },
+          { t: "die ganze Familie hilft mit", em: "🤝", to: "K" },
+          { t: "große Firmen verkaufen die Ernte", em: "🚢", to: "P" },
+          { t: "einen Teil der Ernte essen sie selbst", em: "🍽️", to: "K" }
+        ],
+        hint: "„Klein“ steckt in „Kleinbauern“. Bei der Plantage ist alles sehr groß.",
+        explain: "Auf einer Plantage gibt es riesige Felder mit nur einer Pflanzenart, und große Firmen verkaufen die Ernte. Kleinbauern haben ein kleines Feld, die ganze Familie hilft mit, und einen Teil der Ernte essen sie selbst."
+      },
+      {
+        id: "r2q2", type: "gap", lead: "Erinnerst du dich?",
+        q: "Fülle die Lücken über die Kleinbauern.",
+        term: ["Ernte", "alles, was auf dem Feld gewachsen ist und eingesammelt wird."],
+        text: ["Kleinbauern haben ein ", 0, " Feld. Die ganze ", 1, " hilft mit. Einen Teil der Ernte ", 2, " sie selbst."],
+        answers: ["kleines", "Familie", "essen"],
+        bank: ["kleines", "riesiges", "Familie", "Firma", "essen", "vergessen"],
+        hint: "Bei Kleinbauern ist alles klein. Und es hilft nicht eine Firma, sondern …",
+        explain: "Kleinbauern haben ein kleines Feld. Die ganze Familie hilft mit. Einen Teil der Ernte essen sie selbst."
+      },
+      {
+        id: "r2q3", type: "mc", lead: "Auf dem Arbeitsblatt hast du gelesen, wer den Kakao anbaut.",
+        q: "Wer baut den meisten Kakao an?",
+        options: [
+          { t: "Große Firmen in Deutschland" },
+          { t: "Plantagen in Europa" },
+          { t: "Kleinbauern, vor allem in Westafrika", ok: true },
+          { t: "Kleinbauern, vor allem in Deutschland" }
+        ],
+        hint: "Es sind Familien mit kleinen Feldern. Und Kakao braucht es warm.",
+        explain: "Den meisten Kakao bauen Kleinbauern an, vor allem in Westafrika. Ghana liegt zum Beispiel in Westafrika."
+      }
+    ]
+  },
+  {
+    id: 3, title: "Die Ölpalme und der Zutaten-Detektiv", emoji: "🔍",
+    color: "#D9661F", ink: "#FFFFFF", light: "#FDEBDC", text: "#A84A0E",
+    intro: "Auf dem Arbeitsblatt warst du Zutaten-Detektiv und hast Palmöl auf Verpackungen gesucht.",
+    questions: [
+      {
+        id: "r3q1", type: "gap", lead: "Auf dem Arbeitsblatt hast du die Ölpalme kennengelernt.",
+        q: "Fülle die Lücken.",
+        text: ["Aus den ", 0, " der Ölpalme wird Palmöl gemacht. Palmöl ist ", 1, "."],
+        answers: ["Früchten", "billig"],
+        bank: ["Blättern", "Früchten", "Wurzeln", "teuer", "billig"],
+        hint: "Bei der Olive ist es genauso: Das Öl kommt aus der Frucht. Und Firmen nehmen Palmöl gern, weil es wenig kostet.",
+        explain: "Aus den Früchten der Ölpalme wird Palmöl gemacht. Palmöl ist billig."
+      },
+      {
+        id: "r3q2", type: "multi", two: true,
+        q: "In welchen Produkten kann Palmöl stecken? Tippe alle richtigen an.",
+        options: [
+          { t: "Schokocreme", em: "🍫", ok: true },
+          { t: "Leitungswasser", em: "🚰" },
+          { t: "Kekse", em: "🍪", ok: true },
+          { t: "Seife", em: "🧼", ok: true },
+          { t: "frischer Apfel", em: "🍎" },
+          { t: "Fertigpizza", em: "🍕", ok: true },
+          { t: "Waschmittel", em: "🧺", ok: true }
+        ],
+        hint: "Fünf Produkte sind richtig. Zwei Dinge auf der Liste sind ganz natürlich und brauchen kein Öl.",
+        explain: "Palmöl kann in Schokocreme, Keksen, Fertigpizza, Seife und Waschmittel stecken. Ein frischer Apfel und Leitungswasser enthalten kein Palmöl."
+      },
+      {
+        id: "r3q3", type: "detect", lead: "Jetzt bist du wieder Zutaten-Detektiv!",
+        q: "Finde das Palmöl! Tippe alle Zutaten an, die von der Ölpalme kommen.",
+        term: ["Zutatenliste", "steht auf der Verpackung. Dort steht, was in einem Produkt drin ist."],
+        packs: [
+          { title: "Schoko-Kekse", em: "🍪", items: [
+            { t: "Weizenmehl" }, { t: "Zucker" }, { t: "pflanzliches Fett (Palm)", ok: true }, { t: "Kakao" }, { t: "Salz" }
+          ]},
+          { title: "Seife", em: "🧼", items: [
+            { t: "Sodium Palmate", ok: true }, { t: "Aqua" }, { t: "Glycerin" }, { t: "Parfum" }
+          ]}
+        ],
+        note: "Beispiel: Diese Zutatenlisten sind für das Quiz ausgedacht.",
+        hint: "Achte auf den Wortteil „Palm“. Er kann auch in einem englischen Wort stecken.",
+        explain: "Palmöl hat viele Namen: Palmöl, Palmfett, Palmkernöl oder pflanzliches Fett (Palm). Bei Seife kann auch Sodium Palmate stehen."
+      },
+      {
+        id: "r3q4", type: "tf",
+        q: "Alle Chips enthalten Palmöl.",
+        answer: false,
+        hint: "Kann man das wissen, ohne die Zutatenliste zu lesen?",
+        explain: "Falsch. Chips können Palmöl enthalten. Viele werden aber mit anderen Ölen hergestellt. Darum gilt: Immer die Zutatenliste prüfen!"
+      }
+    ]
+  },
+  {
+    id: 4, title: "Ist das fair? Kwames Geschichte", emoji: "🍫",
+    color: "#7B4A2E", ink: "#FFFFFF", light: "#F3E8DF", text: "#6B3F24",
+    intro: "Auf dem Arbeitsblatt hast du Kwames Geschichte gelesen. Kwame lebt dort, wo Kakao wächst.",
+    questions: [
+      {
+        id: "r4q1", type: "mc", lead: "Erinnerst du dich an Kwame?",
+        q: "Wo lebt Kwame, und was baut seine Familie an?",
+        options: [
+          { t: "In Ghana. Seine Familie baut Kakao an.", ok: true },
+          { t: "In Deutschland. Seine Familie baut Äpfel an." },
+          { t: "In Ghana. Seine Familie baut Kartoffeln an." },
+          { t: "In Deutschland. Seine Familie baut Kakao an." }
+        ],
+        hint: "Kakao wächst in den Tropen. Kwame lebt in einem Land in Westafrika.",
+        explain: "Kwame lebt in Ghana. Seine Familie baut dort Kakao an."
+      },
+      {
+        id: "r4q2", type: "gap", lead: "Auf dem Arbeitsblatt hast du über Kwame gelesen:",
+        q: "Fülle die Lücken.",
+        text: ["Kwame ist ", 0, " Jahre alt. Für die Kakaobohnen bekommt seine Familie sehr ", 1, " Geld."],
+        answers: ["13", "wenig"],
+        bank: ["13", "31", "viel", "wenig"],
+        hint: "Kwame ist ungefähr so alt wie du. Und die Frage heißt: Ist das fair?",
+        explain: "Kwame ist 13 Jahre alt, also ungefähr so alt wie du. Seine Familie bekommt für die Kakaobohnen sehr wenig Geld. Ist das fair? Darüber hast du auf dem Arbeitsblatt nachgedacht."
+      },
+      {
+        id: "r4q3", type: "mc", lead: "Kwame ist nicht das einzige Kind, das im Kakaoanbau arbeitet.",
+        q: "Wie viele Kinder arbeiten im Kakaoanbau in Ghana und der Elfenbeinküste?",
+        term: ["Kinderarbeit", "Kinder müssen regelmäßig arbeiten. Dann bleibt oft wenig Zeit für Schule und Freizeit."],
+        options: [
+          { t: "rund 1.500 Kinder" },
+          { t: "rund 15.000 Kinder" },
+          { t: "rund 1,5 Millionen Kinder", ok: true },
+          { t: "rund 150 Millionen Kinder" }
+        ],
+        hint: "Es ist eine sehr große Zahl: mehr als eine Million, aber weniger als zwei Millionen.",
+        explain: "Rund 1,5 Millionen Kinder arbeiten im Kakaoanbau in Ghana und der Elfenbeinküste. Dabei haben alle Kinder ein Recht auf Schule und Freizeit."
+      }
+    ]
+  },
+  {
+    id: 5, title: "Fairtrade und meine faire Schokoverpackung", emoji: "🏷️",
+    color: "#1F7FA6", ink: "#FFFFFF", light: "#E1F0F6", text: "#16627F",
+    intro: "Auf dem Arbeitsblatt hast du das Fairtrade-Siegel kennengelernt und eine eigene faire Schokoverpackung gestaltet.",
+    questions: [
+      {
+        id: "r5q1", type: "multi", lead: "Erinnerst du dich an das Fairtrade-Siegel?",
+        q: "Was bedeutet das Fairtrade-Siegel? Tippe alle richtigen Sätze an.",
+        term: ["Siegel", "ein Zeichen auf der Verpackung. Es zeigt: Hier wurden bestimmte Regeln eingehalten. „Ausbeuterisch“ heißt: Kinder werden ausgenutzt."],
+        options: [
+          { t: "Die Bauern bekommen faire und verlässlichere Preise.", ok: true },
+          { t: "Die Schokolade ist dann gratis." },
+          { t: "Ausbeuterische Kinderarbeit ist verboten.", ok: true },
+          { t: "Die Schokolade enthält mehr Zucker." },
+          { t: "Es gibt Regeln zum Schutz der Umwelt.", ok: true }
+        ],
+        hint: "Drei Sätze sind richtig. Es geht um die Bauern, die Kinder und die Natur.",
+        explain: "Mit dem Fairtrade-Siegel bekommen die Bauern faire und verlässlichere Preise. Ausbeuterische Kinderarbeit ist verboten, und es gibt Regeln zum Schutz der Umwelt."
+      },
+      {
+        id: "r5q2", type: "mc",
+        q: "Faire Schokolade kostet im Laden mehr. Warum?",
+        options: [
+          { t: "Weil sie mehr Zucker enthält." },
+          { t: "Weil die Bauern einen fairen Preis für ihren Kakao bekommen.", ok: true },
+          { t: "Weil die Verpackung aus Gold ist." },
+          { t: "Weil sie nur am Wochenende verkauft wird." }
+        ],
+        hint: "Denk an Kwames Familie. Wer soll mehr Geld bekommen?",
+        explain: "Bei Fairtrade bekommen die Bauern faire und verlässlichere Preise für ihren Kakao. Dieses Geld steckt im Preis der Schokolade."
+      },
+      {
+        id: "r5q3", type: "opinion",
+        q: "Würdest du faire Schokolade kaufen?",
+        sub: "Hier gibt es kein Richtig oder Falsch. Es geht um deine Meinung.",
+        options: [
+          { t: "Ja", em: "👍" },
+          { t: "Vielleicht", em: "🤔" },
+          { t: "Eher nicht", em: "👎" }
+        ],
+        pro: [
+          "Die Bauernfamilien bekommen faire und verlässlichere Preise.",
+          "Ausbeuterische Kinderarbeit ist verboten."
+        ],
+        con: [
+          "Faire Schokolade kostet mehr. Vielleicht reicht das Taschengeld nicht.",
+          "Vielleicht gibt es meine Lieblingssorte nicht mit Fairtrade-Siegel."
+        ],
+        hint: "Überlege: Was ist dir beim Einkaufen wichtig? Der Preis, der Geschmack oder die Menschen, die den Kakao anbauen?"
+      },
+      {
+        id: "r5q4", type: "match", lead: "Auf deine Verpackung hast du geschrieben, warum fair gut ist.",
+        q: "Welche Sätze sind gut für die Bauernfamilien, welche für den Regenwald? Ordne zu.",
+        targets: [
+          { id: "B", label: "Gut für die Bauernfamilien", em: "👨‍🌾" },
+          { id: "R", label: "Gut für den Regenwald", em: "🌳" }
+        ],
+        items: [
+          { t: "Die Bauern bekommen faire Preise.", em: "💰", to: "B" },
+          { t: "Es gibt Regeln zum Schutz der Umwelt.", em: "🌿", to: "R" },
+          { t: "Die Preise sind verlässlicher. Die Familien können besser planen.", em: "📅", to: "B" },
+          { t: "Ausbeuterische Kinderarbeit ist verboten.", em: "🎒", to: "B" },
+          { t: "Umwelt-Regeln helfen Tieren und Pflanzen im Regenwald.", em: "🦜", to: "R" }
+        ],
+        hint: "Drei Sätze handeln von Menschen und Geld. Zwei Sätze handeln von der Natur.",
+        explain: "Faire und verlässlichere Preise und das Verbot von ausbeuterischer Kinderarbeit helfen den Bauernfamilien. Die Regeln zum Schutz der Umwelt helfen dem Regenwald."
+      }
+    ]
+  }
+];
+
+var TAKEAWAY = [
+  { t: "Ich schaue öfter auf die Zutatenliste.", em: "🔍" },
+  { t: "Ich achte beim Einkaufen auf das Fairtrade-Siegel.", em: "🏷️" },
+  { t: "Ich erzähle meiner Familie, was ich über die Tropen gelernt habe.", em: "🗣️" }
+];
+
+var MOTIV = {
+  high: ["Super! Du hast das Arbeitsblatt richtig gut im Kopf.", "Klasse! Da hast du gut aufgepasst.", "Stark! Weiter so!"],
+  mid:  ["Gut gemacht! Du bist auf dem richtigen Weg.", "Schon richtig viel gewusst! Weiter geht’s.", "Gut! In der nächsten Runde holst du noch mehr Punkte."],
+  low:  ["Bleib dran! In der nächsten Runde holst du Punkte.", "Kein Problem. Lesen, nachdenken, weitermachen!", "Jede Frage hilft dir beim Lernen. Weiter geht’s!"]
+};
+
+/* =========================================================
+   HILFSFUNKTIONEN
+   ========================================================= */
+function h(tag, attrs) {
+  var e = document.createElement(tag);
+  if (attrs) for (var k in attrs) {
+    var v = attrs[k];
+    if (v == null || v === false) continue;
+    if (k === "class") e.className = v;
+    else if (k === "text") e.textContent = v;
+    else if (k.indexOf("on") === 0) e.addEventListener(k.slice(2), v);
+    else e.setAttribute(k, v === true ? "" : v);
+  }
+  for (var i = 2; i < arguments.length; i++) add(e, arguments[i]);
+  return e;
+}
+function add(e, c) {
+  if (c == null || c === false) return;
+  if (Array.isArray(c)) { c.forEach(function (x) { add(e, x); }); return; }
+  e.appendChild(c.nodeType ? c : document.createTextNode(String(c)));
+}
+function shuffle(a) {
+  for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)); var t = a[i]; a[i] = a[j]; a[j] = t; }
+  return a;
+}
+function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+function emSpan(em) { return em ? h("span", { class: "em", "aria-hidden": "true" }, em) : null; }
+function isScored(q) { return q.type !== "opinion"; }
+function roundMax(r) { return r.questions.filter(isScored).length * 2; }
+var TOTAL_MAX = ROUNDS.reduce(function (s, r) { return s + roundMax(r); }, 0);
+var reduceMotion = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* =========================================================
+   VORLESEN (Web Speech API, de-DE)
+   ========================================================= */
+var Speech = (function () {
+  var ok = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+  var voice = null, activeBtn = null;
+  function loadVoice() {
+    if (!ok) return;
+    var vs = speechSynthesis.getVoices() || [];
+    voice = vs.filter(function (v) { return v.lang === "de-DE" || v.lang === "de_DE"; })[0]
+         || vs.filter(function (v) { return /^de/i.test(v.lang); })[0] || null;
+  }
+  if (ok) { loadVoice(); if (speechSynthesis.addEventListener) speechSynthesis.addEventListener("voiceschanged", loadVoice); }
+  function clean(t) {
+    return t.replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F1E6}-\u{1F1FF}️‍]/gu, "")
+            .replace(/\s+/g, " ").trim();
+  }
+  function setBtn(b, on) { if (b) { b.setAttribute("aria-pressed", on ? "true" : "false"); var l = b.querySelector(".lbl"); if (l) l.textContent = on ? "Stopp" : (b.dataset.label || "Vorlesen"); } }
+  function stop() { if (ok) speechSynthesis.cancel(); setBtn(activeBtn, false); activeBtn = null; }
+  function speak(text, btn) {
+    if (!ok) return;
+    if (activeBtn && activeBtn === btn) { stop(); return; }
+    stop();
+    if (!voice) loadVoice();
+    var u = new SpeechSynthesisUtterance(clean(text));
+    u.lang = "de-DE"; if (voice) u.voice = voice; u.rate = 0.92;
+    u.onend = u.onerror = function () { if (activeBtn === btn) { setBtn(btn, false); activeBtn = null; } };
+    activeBtn = btn; setBtn(btn, true);
+    speechSynthesis.speak(u);
+  }
+  return { ok: ok, speak: speak, stop: stop };
+})();
+
+function speakText(q) {
+  var parts = [];
+  if (q.lead) parts.push(q.lead);
+  if (q.type === "tf") parts.push("Wahr oder falsch?");
+  parts.push(q.q);
+  if (q.sub) parts.push(q.sub);
+  var L = "ABCDEFG";
+  if (q.type === "mc") q._opts.forEach(function (o, i) { parts.push("Antwort " + L[i] + ": " + o.t + "."); });
+  if (q.type === "tf") parts.push("Antwort A: Wahr. Antwort B: Falsch.");
+  if (q.type === "multi") { parts.push("Die Antworten:"); q._opts.forEach(function (o) { parts.push(o.t + "."); }); }
+  if (q.type === "opinion") q.options.forEach(function (o) { parts.push(o.t + "."); });
+  if (q.type === "detect") q.packs.forEach(function (p) { parts.push("Zutatenliste " + p.title + ": " + p.items.map(function (i) { return i.t; }).join(", ") + "."); });
+  if (q.type === "match") {
+    parts.push("Die Karten: " + q._items.map(function (i) { return i.t; }).join(", ") + ".");
+    parts.push("Die Felder: " + q.targets.map(function (t) { return t.label; }).join(" und ") + ".");
+  }
+  if (q.type === "gap") {
+    parts.push(q.text.map(function (p) { return typeof p === "number" ? " Lücke " : p; }).join(""));
+    parts.push("Diese Wörter kannst du einsetzen: " + q._bank.join(", ") + ".");
+  }
+  if (q.term) parts.push("Erklärung: " + q.term[0] + " heißt: " + q.term[1]);
+  return parts.join(" ");
+}
+
+/* =========================================================
+   ZUSTAND
+   ========================================================= */
+var S = {
+  mode: "full",      // "full" | "repeat"
+  plan: [],          // [{round, qs:[...]}]
+  ri: 0, qi: 0,
+  score: 0,
+  results: {},       // qid -> Punkte (0,1,2)
+  roundScore: {},
+  mistakes: [],
+  played: 0,
+  answered: 0, total: 0
+};
+
+var app = document.getElementById("app");
+var topbar = document.getElementById("topbar");
+
+function setAccent(r) {
+  var s = document.documentElement.style;
+  if (!r) { s.removeProperty("--accent"); s.removeProperty("--accent-ink"); s.removeProperty("--accent-l"); s.removeProperty("--accent-text"); return; }
+  s.setProperty("--accent", r.color); s.setProperty("--accent-ink", r.ink);
+  s.setProperty("--accent-l", r.light); s.setProperty("--accent-text", r.text);
+}
+function screen(node, showTop) {
+  Speech.stop();
+  topbar.classList.toggle("hidden", !showTop);
+  app.innerHTML = "";
+  app.appendChild(node);
+  window.scrollTo(0, 0);
+}
+function updateTop() {
+  var pct = S.total ? Math.round(S.answered / S.total * 100) : 0;
+  document.getElementById("progressFill").style.width = pct + "%";
+  document.getElementById("progress").setAttribute("aria-valuenow", pct);
+  document.getElementById("progressLabel").textContent = S.answered + " von " + S.total;
+  document.getElementById("scorePill").textContent = "⭐ " + S.score + " Punkte";
+}
+function bumpScore() {
+  var p = document.getElementById("scorePill");
+  p.classList.remove("bump"); void p.offsetWidth; p.classList.add("bump");
+}
+
+/* =========================================================
+   STARTBILDSCHIRM
+   ========================================================= */
+function heroSVG() {
+  var wrap = document.createElement("div");
+  wrap.innerHTML =
+    '<svg class="hero" viewBox="0 0 340 230" role="img" aria-label="Einkaufswagen mit Banane, Schokolade, Kaffee und Ananas">' +
+      '<ellipse cx="170" cy="212" rx="140" ry="10" fill="#E8DFD0"/>' +
+      '<path d="M44 62 L78 62 L104 160 L262 160" fill="none" stroke="#6B3F24" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>' +
+      '<path d="M84 86 L290 86 L268 146 L100 146 Z" fill="#1E6B45"/>' +
+      '<path d="M84 86 L290 86 L268 146 L100 146 Z" fill="none" stroke="#14502F" stroke-width="6" stroke-linejoin="round"/>' +
+      '<path d="M140 86 L146 146 M196 86 L194 146 M248 86 L236 146" stroke="#2E8B57" stroke-width="5"/>' +
+      '<circle cx="122" cy="186" r="15" fill="#6B3F24"/><circle cx="122" cy="186" r="6" fill="#F4C430"/>' +
+      '<circle cx="244" cy="186" r="15" fill="#6B3F24"/><circle cx="244" cy="186" r="6" fill="#F4C430"/>' +
+      '<path d="M104 160 L118 172 M262 160 L248 172" stroke="#6B3F24" stroke-width="8" stroke-linecap="round"/>' +
+      '<text x="102" y="86" font-size="58">🍌</text>' +
+      '<text x="152" y="80" font-size="54">🍫</text>' +
+      '<text x="200" y="84" font-size="52">☕</text>' +
+      '<text x="240" y="80" font-size="56">🍍</text>' +
+      '<text x="20" y="44" font-size="34">🌴</text>' +
+      '<text x="292" y="40" font-size="30">☀️</text>' +
+    '</svg>';
+  return wrap.firstChild;
+}
+
+function showStart() {
+  setAccent(null);
+  var node = h("section", { class: "start" },
+    heroSVG(),
+    h("h1", null, "Tropen im Einkaufswagen", h("span", null, "Das große Abschluss-Quiz")),
+    h("p", null, "Zeig, was du in der Reihe „Lecker, aber auch gut und fair?“ gelernt hast. Alle Fragen kennst du von deinem Arbeitsblatt."),
+    h("div", { class: "facts" },
+      h("span", null, "🎯 5 Runden"), h("span", null, "❓ 18 Fragen"), h("span", null, "🔊 Vorlesen"), h("span", null, "💡 Tipps"), h("span", null, "⏳ Kein Zeitdruck")),
+    h("button", { class: "btn green big", onclick: function () { startGame(); } }, "Quiz starten ▶")
+  );
+  screen(node, false);
+}
+
+/* =========================================================
+   SPIELABLAUF
+   ========================================================= */
+function prepQuestion(q, shuffled) {
+  q._opts = q.options ? (shuffled && q.type !== "opinion" ? shuffle(q.options.slice()) : q.options.slice()) : null;
+  q._items = q.items ? (shuffled ? shuffle(q.items.slice()) : q.items.slice()) : null;
+  q._bank = q.bank ? (shuffled ? shuffle(q.bank.slice()) : q.bank.slice()) : null;
+  if (q.packs) q._packs = q.packs.map(function (p) { return { title: p.title, em: p.em, items: shuffled ? shuffle(p.items.slice()) : p.items.slice() }; });
+}
+
+function startGame() {
+  var shuffled = S.played > 0;
+  S.played++;
+  S.mode = "full"; S.score = 0; S.results = {}; S.roundScore = {}; S.answered = 0;
+  S.plan = ROUNDS.map(function (r) {
+    var qs = shuffled ? shuffle(r.questions.slice()) : r.questions.slice();
+    qs.forEach(function (q) { prepQuestion(q, shuffled); });
+    return { round: r, qs: qs };
+  });
+  S.total = ROUNDS.reduce(function (s, r) { return s + r.questions.length; }, 0);
+  S.ri = 0; S.qi = 0;
+  updateTop();
+  showRoundIntro();
+}
+
+function startRepeat() {
+  var ids = S.mistakes.slice();
+  var all = [];
+  ROUNDS.forEach(function (r) { r.questions.forEach(function (q) { if (ids.indexOf(q.id) >= 0) { q._round = r; all.push(q); } }); });
+  shuffle(all).forEach(function (q) { prepQuestion(q, true); });
+  S.mode = "repeat"; S.score = 0; S.results = {}; S.answered = 0; S.total = all.length;
+  S.plan = [{ round: { id: 0, title: "Fehler-Training", emoji: "🔁", color: "#1E6B45", ink: "#FFFFFF", light: "#E3F1E8", text: "#14502F",
+    intro: "Hier kommen nur die Fragen, bei denen du beim ersten Versuch nicht alle Punkte bekommen hast." }, qs: all }];
+  S.ri = 0; S.qi = 0;
+  updateTop();
+  showRoundIntro();
+}
+
+function showRoundIntro() {
+  var P = S.plan[S.ri], r = P.round;
+  setAccent(r);
+  var kicker = S.mode === "repeat" ? "Wiederholung" : "Runde " + r.id + " von " + ROUNDS.length;
+  var node = h("section", { class: "card center" },
+    h("div", { class: "round-kicker" }, kicker),
+    h("div", { class: "round-emoji", "aria-hidden": "true" }, r.emoji),
+    h("h2", { class: "round-title" }, r.title),
+    S.mode === "full" ? h("span", { class: "chip sheet" }, "📄 Vom Arbeitsblatt") : null,
+    h("p", { class: "round-intro" }, r.intro),
+    h("div", { class: "meta" }, P.qs.length + (P.qs.length === 1 ? " Frage" : " Fragen")),
+    h("div", { class: "btn-row" }, h("button", { class: "btn big", onclick: function () { S.qi = 0; showQuestion(); } }, "Los geht’s! ▶"))
+  );
+  screen(node, true);
+}
+
+function nextStep() {
+  var P = S.plan[S.ri];
+  if (S.qi < P.qs.length - 1) { S.qi++; showQuestion(); return; }
+  if (S.mode === "repeat") { showRepeatEnd(); return; }
+  showRoundEnd();
+}
+
+function showRoundEnd() {
+  var P = S.plan[S.ri], r = P.round;
+  var pts = S.roundScore[r.id] || 0, max = roundMax(r), ratio = pts / max;
+  var last = S.ri === S.plan.length - 1;
+  var node = h("section", { class: "card center" },
+    h("div", { class: "round-emoji", "aria-hidden": "true" }, "🎉"),
+    h("h2", { class: "round-title" }, "Runde " + r.id + " geschafft!"),
+    h("div", null,
+      h("div", { class: "stat" }, h("b", null, pts + " / " + max), h("span", null, "Punkte in dieser Runde")),
+      h("div", { class: "stat" }, h("b", null, S.score), h("span", null, "Punkte insgesamt"))),
+    h("p", { class: "motiv" }, pick(ratio >= .8 ? MOTIV.high : ratio >= .5 ? MOTIV.mid : MOTIV.low)),
+    h("div", { class: "btn-row" },
+      h("button", { class: "btn big", onclick: function () {
+        if (last) showTakeaway(); else { S.ri++; showRoundIntro(); }
+      } }, last ? "Zum Ergebnis ▶" : "Weiter zu Runde " + (r.id + 1) + " ▶"))
+  );
+  screen(node, true);
+  confetti(70);
+}
+
+/* =========================================================
+   FRAGE ANZEIGEN
+   ========================================================= */
+function showQuestion() {
+  var P = S.plan[S.ri], q = P.qs[S.qi];
+  var r = S.mode === "repeat" ? q._round : P.round;
+  setAccent(r);
+  var num = S.answered + 1;
+
+  var feedbackBox = h("div", { "aria-live": "polite" });
+  var actions = h("div", { class: "actions" });
+  var hintBox = h("div", { class: "hintbox hidden" }, h("span", { class: "ico", "aria-hidden": "true" }, "💡"), h("div", null, q.hint));
+
+  var state = { attempts: 0, done: false };
+  var checkBtn = null;
+
+  var api = {
+    state: state,
+    setCheck: function (fn) {
+      checkBtn = h("button", { class: "btn big", disabled: true, onclick: function () { if (!state.done) fn(); } }, "Prüfen ✔");
+      actions.innerHTML = ""; actions.appendChild(checkBtn);
+    },
+    enableCheck: function (on) { if (checkBtn) checkBtn.disabled = !on; },
+    submit: function (correct, cb) {
+      cb = cb || {};
+      state.attempts++;
+      if (correct) { finish(state.attempts === 1 ? 2 : 1, cb.anchor); }
+      else if (state.attempts === 1) { retry(cb.retryMsg); if (cb.onRetry) cb.onRetry(); }
+      else { if (cb.onReveal) cb.onReveal(); finish(0); }
+    },
+    finishOpinion: function () {
+      state.done = true;
+      record(null);
+      showNext();
+    }
+  };
+
+  function sayBtn(text) {
+    if (!Speech.ok) return null;
+    var b = h("button", { class: "say", "aria-label": "Rückmeldung vorlesen", "aria-pressed": "false", onclick: function () { Speech.speak(text, b); } }, "🔊");
+    return b;
+  }
+  function retry(msg) {
+    var txt = (msg ? msg + " " : "") + "Du hast noch einen Versuch!";
+    feedbackBox.innerHTML = "";
+    feedbackBox.appendChild(h("div", { class: "feedback retry" },
+      h("span", { class: "big", "aria-hidden": "true" }, "🤔"),
+      h("div", null, h("h3", null, "Noch nicht ganz!"), h("p", null, txt + " Tipp: Tippe auf die Glühbirne 💡.")),
+      sayBtn("Noch nicht ganz! " + txt)));
+  }
+  function record(points) {
+    S.answered++;
+    if (points != null) {
+      S.results[q.id] = points;
+      S.score += points;
+      if (S.mode === "full") S.roundScore[r.id] = (S.roundScore[r.id] || 0) + points;
+    }
+    updateTop();
+  }
+  function finish(points, anchor) {
+    state.done = true;
+    record(points);
+    var cls, icon, title;
+    if (points === 2) { cls = "ok"; icon = "🎉"; title = "Richtig! +2 Punkte"; }
+    else if (points === 1) { cls = "ok"; icon = "👍"; title = "Richtig im zweiten Versuch! +1 Punkt"; }
+    else { cls = "sol"; icon = "💪"; title = "Diesmal nicht. Das ist die Lösung:"; }
+    feedbackBox.innerHTML = "";
+    feedbackBox.appendChild(h("div", { class: "feedback " + cls },
+      h("span", { class: "big", "aria-hidden": "true" }, icon),
+      h("div", null, h("h3", null, title), h("p", null, q.explain)),
+      sayBtn(title + " " + q.explain)));
+    if (points > 0) { bumpScore(); plusFloat("+" + points, anchor); if (points === 2) confetti(18); }
+    showNext();
+    setTimeout(function () { feedbackBox.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" }); }, 60);
+  }
+  function showNext() {
+    var lastQ = S.qi === P.qs.length - 1;
+    actions.innerHTML = "";
+    actions.appendChild(h("button", { class: "btn big", onclick: nextStep }, lastQ ? "Runde beenden ▶" : "Weiter ▶"));
+    setTimeout(function () { actions.scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" }); }, 120);
+  }
+
+  var speakBtn = Speech.ok ? h("button", { class: "tool", "aria-pressed": "false", "data-label": "Vorlesen",
+      onclick: function () { Speech.speak(speakText(q), speakBtn); } },
+      h("span", { class: "ico", "aria-hidden": "true" }, "🔊"), h("span", { class: "lbl" }, "Vorlesen")) : null;
+  var hintBtn = q.hint ? h("button", { class: "tool", "aria-pressed": "false", "aria-label": "Tipp anzeigen",
+      onclick: function () {
+        var on = hintBox.classList.toggle("hidden") === false;
+        hintBtn.setAttribute("aria-pressed", on ? "true" : "false");
+      } }, h("span", { class: "ico", "aria-hidden": "true" }, "💡"), h("span", null, "Tipp")) : null;
+
+  var body = h("div", { class: "body" });
+  var node = h("section", { class: "card" },
+    h("div", { class: "qhead" },
+      h("span", { class: "chip round" }, r.emoji + " " + r.title),
+      h("span", { class: "chip sheet" }, "📄 Vom Arbeitsblatt"),
+      h("span", { class: "chip num" }, "Frage " + num + " von " + S.total)),
+    h("div", { class: "tools" }, speakBtn, hintBtn),
+    hintBox,
+    q.lead ? h("p", { class: "lead" }, q.lead) : null,
+    h("h2", { class: "qtext" }, q.type === "tf" ? "Wahr oder falsch? " + q.q : q.q),
+    q.sub ? h("p", { style: "margin:0 0 8px;color:var(--muted)" }, q.sub) : null,
+    q.term ? h("div", { class: "term" }, h("span", { "aria-hidden": "true" }, "📘"), h("div", null, h("b", null, q.term[0] + ":"), " " + q.term[1])) : null,
+    body, feedbackBox, actions
+  );
+  RENDER[q.type](q, body, api);
+  screen(node, true);
+}
+
+/* =========================================================
+   FRAGETYPEN
+   ========================================================= */
+var RENDER = {};
+
+/* Multiple Choice */
+RENDER.mc = function (q, body, api) {
+  var L = "ABCD";
+  var grid = h("div", { class: "opts" + (q.two ? " two" : "") });
+  var btns = q._opts.map(function (o, i) {
+    var b = h("button", { class: "opt", onclick: function () {
+      if (api.state.done || b.disabled) return;
+      if (o.ok) { b.classList.add("ok"); lock(); api.submit(true, { anchor: b }); }
+      else {
+        b.classList.add("bad"); b.disabled = true;
+        api.submit(false, { onReveal: function () { lock(); btns.forEach(function (x, j) { if (q._opts[j].ok) x.classList.add("ok"); }); } });
+      }
+    } }, h("span", { class: "letter" }, L[i]), emSpan(o.em), h("span", null, o.t));
+    return b;
+  });
+  function lock() { btns.forEach(function (x) { x.disabled = true; }); }
+  add(grid, btns); body.appendChild(grid);
+};
+
+/* Wahr / Falsch */
+RENDER.tf = function (q, body, api) {
+  var grid = h("div", { class: "opts two tf" });
+  var defs = [{ v: true, t: "Wahr", em: "✅" }, { v: false, t: "Falsch", em: "❌" }];
+  var btns = defs.map(function (d) {
+    var b = h("button", { class: "opt", onclick: function () {
+      if (api.state.done || b.disabled) return;
+      if (d.v === q.answer) { b.classList.add("ok"); lock(); api.submit(true, { anchor: b }); }
+      else {
+        b.classList.add("bad"); b.disabled = true;
+        api.submit(false, { retryMsg: "Das stimmt nicht. Lies den Satz noch einmal genau.", onReveal: function () { lock(); } });
+      }
+    } }, h("span", { class: "em", "aria-hidden": "true" }, d.em), h("span", null, d.t));
+    return b;
+  });
+  function lock() { btns.forEach(function (x) { x.disabled = true; }); }
+  add(grid, btns); body.appendChild(grid);
+};
+
+/* Mehrfachauswahl (auch für Detektiv) */
+function multiLogic(q, opts, btns, api) {
+  var sel = opts.map(function () { return false; });
+  btns.forEach(function (b, i) {
+    b.addEventListener("click", function () {
+      if (api.state.done || b.disabled) return;
+      sel[i] = !sel[i];
+      b.classList.toggle("sel", sel[i]);
+      b.setAttribute("aria-pressed", sel[i] ? "true" : "false");
+      api.enableCheck(sel.some(Boolean));
+    });
+    b.setAttribute("aria-pressed", "false");
+  });
+  api.setCheck(function () {
+    var wrongSel = [], missing = 0;
+    opts.forEach(function (o, i) { if (sel[i] && !o.ok) wrongSel.push(i); if (!sel[i] && o.ok) missing++; });
+    var correct = wrongSel.length === 0 && missing === 0;
+    if (correct) {
+      btns.forEach(function (b, i) { b.disabled = true; if (sel[i]) { b.classList.remove("sel"); b.classList.add("ok"); } });
+      api.submit(true, { anchor: btns[0] });
+      return;
+    }
+    var msg = [];
+    if (wrongSel.length) msg.push("Rot markierte Antworten passen nicht.");
+    if (missing) msg.push(missing === 1 ? "Eine richtige Antwort fehlt noch." : "Es fehlen noch " + missing + " richtige Antworten.");
+    api.submit(false, {
+      retryMsg: msg.join(" "),
+      onRetry: function () {
+        wrongSel.forEach(function (i) { btns[i].classList.remove("sel"); btns[i].classList.add("bad"); });
+        setTimeout(function () {
+          wrongSel.forEach(function (i) { sel[i] = false; btns[i].classList.remove("bad"); btns[i].setAttribute("aria-pressed", "false"); });
+          api.enableCheck(sel.some(Boolean));
+        }, 1100);
+      },
+      onReveal: function () {
+        btns.forEach(function (b, i) {
+          b.disabled = true; b.classList.remove("sel");
+          if (opts[i].ok) { b.classList.add("ok"); if (!sel[i]) b.classList.add("miss"); }
+          else if (sel[i]) b.classList.add("bad");
+        });
+      }
+    });
+  });
+}
+RENDER.multi = function (q, body, api) {
+  var grid = h("div", { class: "opts" + (q.two ? " two" : "") });
+  var btns = q._opts.map(function (o) {
+    return h("button", { class: "opt" }, emSpan(o.em), h("span", null, o.t), h("span", { class: "check", "aria-hidden": "true" }, "✔"));
+  });
+  add(grid, btns); body.appendChild(grid);
+  multiLogic(q, q._opts, btns, api);
+};
+RENDER.detect = function (q, body, api) {
+  var wrap = h("div", { class: "detect-wrap" });
+  var opts = [], btns = [];
+  q._packs.forEach(function (p) {
+    var list = h("div", { class: "ingr" });
+    p.items.forEach(function (it) {
+      var b = h("button", { class: "opt" }, h("span", null, it.t));
+      opts.push(it); btns.push(b); list.appendChild(b);
+    });
+    wrap.appendChild(h("div", { class: "pack" },
+      h("div", { class: "pack-head" }, emSpan(p.em), h("span", null, "Beispiel: " + p.title)),
+      h("div", { class: "pack-body" }, h("small", null, "Zutaten"), list)));
+  });
+  body.appendChild(wrap);
+  body.appendChild(h("p", { class: "example-note" }, "ℹ️ " + q.note));
+  multiLogic(q, opts, btns, api);
+};
+
+/* Zuordnen per Antippen */
+RENDER.match = function (q, body, api) {
+  var place = {};            // index -> target id | null
+  var locked = {};           // index -> true (richtig, fest)
+  var selected = null;
+  var pool = h("div", { class: "pool", "aria-label": "Karten" });
+  var tBoxes = {};
+  var cards = q._items.map(function (it, i) {
+    place[i] = null;
+    var c = h("button", { class: "mcard", onclick: function (e) {
+      e.stopPropagation();
+      if (api.state.done) return;
+      // Ist schon eine Karte ausgewählt, zählt ein Tipp auf eine verteilte Karte als Tipp auf deren Feld
+      if (selected !== null && selected !== i && place[i] !== null) { drop(place[i]); return; }
+      if (locked[i]) return;
+      if (place[i] !== null) { place[i] = null; selected = null; draw(); return; }  // zurück in den Stapel
+      selected = selected === i ? null : i; draw();
+    } }, emSpan(it.em), h("span", null, it.t));
+    return c;
+  });
+  var targetsEl = h("div", { class: "targets" });
+  q.targets.forEach(function (t) {
+    var list = h("div", { style: "display:flex;flex-direction:column;gap:10px" });
+    var box = h("div", { class: "target", role: "button", tabindex: "0", "aria-label": "Feld: " + t.label,
+      onclick: function () { drop(t.id); }, onkeydown: function (e) { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); drop(t.id); } } },
+      h("div", { class: "target-title" }, emSpan(t.em), h("span", null, t.label)), list);
+    tBoxes[t.id] = { box: box, list: list };
+    targetsEl.appendChild(box);
+  });
+  function drop(tid) {
+    if (api.state.done || selected === null) return;
+    place[selected] = tid; selected = null; draw();
+  }
+  function draw() {
+    pool.innerHTML = "";
+    Object.keys(tBoxes).forEach(function (k) { tBoxes[k].list.innerHTML = ""; tBoxes[k].box.classList.toggle("ready", selected !== null); });
+    cards.forEach(function (c, i) {
+      c.classList.toggle("sel", selected === i);
+      if (place[i] === null) pool.appendChild(c); else tBoxes[place[i]].list.appendChild(c);
+    });
+    var empty = cards.every(function (c, i) { return place[i] !== null; });
+    pool.classList.toggle("empty", empty);
+    api.enableCheck(empty);
+  }
+  body.appendChild(h("p", { class: "howto" }, "👆 Tippe erst eine Karte an, dann das passende Feld. Tippst du eine verteilte Karte an, kommt sie zurück."));
+  body.appendChild(pool);
+  body.appendChild(targetsEl);
+  draw();
+  api.setCheck(function () {
+    var wrong = [];
+    q._items.forEach(function (it, i) { if (place[i] !== it.to) wrong.push(i); });
+    if (!wrong.length) {
+      cards.forEach(function (c, i) { c.classList.add("ok"); c.disabled = true; });
+      api.submit(true, { anchor: cards[0] });
+      return;
+    }
+    api.submit(false, {
+      retryMsg: (wrong.length === 1 ? "Eine Karte liegt noch falsch. Sie kommt zurück in den Stapel." : wrong.length + " Karten liegen noch falsch. Sie kommen zurück in den Stapel."),
+      onRetry: function () {
+        cards.forEach(function (c, i) { if (wrong.indexOf(i) < 0) { locked[i] = true; c.classList.add("ok"); } else c.classList.add("bad"); });
+        api.enableCheck(false);
+        setTimeout(function () {
+          wrong.forEach(function (i) { place[i] = null; cards[i].classList.remove("bad"); });
+          draw();
+        }, 1100);
+      },
+      onReveal: function () {
+        q._items.forEach(function (it, i) {
+          var c = cards[i]; c.disabled = true; c.classList.remove("sel", "bad");
+          c.classList.add("ok");
+          if (place[i] !== it.to) { c.classList.add("fixed"); place[i] = it.to; }
+        });
+        selected = null; draw();
+        Object.keys(tBoxes).forEach(function (k) { tBoxes[k].box.classList.remove("ready"); });
+      }
+    });
+  });
+};
+
+/* Lückentext mit Auswahlwörtern */
+RENDER.gap = function (q, body, api) {
+  var n = q.answers.length;
+  var fill = [], gapEls = [], lockedGap = [];
+  var active = 0;
+  var textEl = h("div", { class: "gaptext" });
+  q.text.forEach(function (p) {
+    if (typeof p === "number") {
+      var idx = p;
+      fill[idx] = null;
+      var g = h("button", { class: "gap", "aria-label": "Lücke " + (idx + 1), onclick: function () {
+        if (api.state.done || lockedGap[idx]) return;
+        if (fill[idx] !== null) { fill[idx] = null; }
+        active = idx; draw();
+      } }, " ");
+      gapEls[idx] = g; textEl.appendChild(g);
+    } else textEl.appendChild(document.createTextNode(p));
+  });
+  var bankEl = h("div", { class: "bank" });
+  var words = q._bank.map(function (w) {
+    var b = h("button", { class: "mcard", onclick: function () {
+      if (api.state.done || b.classList.contains("used")) return;
+      if (active === null) return;
+      fill[active] = w;
+      active = nextEmpty(active);
+      draw();
+    } }, h("span", null, w));
+    b._word = w;
+    return b;
+  });
+  function nextEmpty(from) {
+    for (var k = 1; k <= n; k++) { var j = (from + k) % n; if (fill[j] === null) return j; }
+    return null;
+  }
+  function draw() {
+    gapEls.forEach(function (g, i) {
+      g.textContent = fill[i] === null ? " " : fill[i];
+      g.classList.toggle("filled", fill[i] !== null);
+      g.classList.toggle("active", active === i && !api.state.done);
+    });
+    words.forEach(function (b) {
+      var used = fill.indexOf(b._word) >= 0;
+      b.classList.toggle("used", used); b.disabled = used || api.state.done;
+    });
+    var full = fill.every(function (f) { return f !== null; });
+    if (active === null && !full) active = nextEmpty(-1 + n);
+    api.enableCheck(full);
+  }
+  add(bankEl, words);
+  body.appendChild(textEl);
+  body.appendChild(h("p", { class: "howto", style: "margin-top:14px" }, "👆 Tippe ein Wort an. Es springt in die leuchtende Lücke. Tippst du eine Lücke an, wird sie wieder frei."));
+  body.appendChild(bankEl);
+  draw();
+  api.setCheck(function () {
+    var wrong = [];
+    q.answers.forEach(function (a, i) { if (fill[i] !== a) wrong.push(i); });
+    if (!wrong.length) {
+      gapEls.forEach(function (g) { g.classList.add("ok"); g.disabled = true; });
+      active = null; words.forEach(function (b) { b.disabled = true; });
+      api.submit(true, { anchor: gapEls[0] });
+      draw();
+      return;
+    }
+    api.submit(false, {
+      retryMsg: (wrong.length === 1 ? "Eine Lücke ist noch falsch." : wrong.length + " Lücken sind noch falsch.") + " Die falschen Wörter kommen zurück.",
+      onRetry: function () {
+        gapEls.forEach(function (g, i) { if (wrong.indexOf(i) < 0) { lockedGap[i] = true; g.classList.add("ok"); } else g.classList.add("bad"); });
+        api.enableCheck(false);
+        setTimeout(function () {
+          wrong.forEach(function (i) { fill[i] = null; gapEls[i].classList.remove("bad"); });
+          active = wrong[0]; draw();
+        }, 1100);
+      },
+      onReveal: function () {
+        q.answers.forEach(function (a, i) { fill[i] = a; gapEls[i].disabled = true; gapEls[i].classList.add("ok"); });
+        active = null; draw();
+        words.forEach(function (b) { b.disabled = true; });
+      }
+    });
+  });
+};
+
+/* Meinungsfrage */
+RENDER.opinion = function (q, body, api) {
+  var grid = h("div", { class: "opts" });
+  var btns = q.options.map(function (o) {
+    var b = h("button", { class: "opt", onclick: function () {
+      if (api.state.done) return;
+      btns.forEach(function (x) { x.disabled = true; });
+      b.classList.add("sel");
+      body.appendChild(h("div", { class: "proscons" },
+        h("div", { class: "pc pro" }, h("h3", null, "👍 Gründe dafür"), h("ul", null, q.pro.map(function (t) { return h("li", null, t); }))),
+        h("div", { class: "pc con" }, h("h3", null, "🤔 Gründe dagegen"), h("ul", null, q.con.map(function (t) { return h("li", null, t); })))
+      ));
+      body.appendChild(h("div", { class: "feedback neutral" },
+        h("span", { class: "big", "aria-hidden": "true" }, "💬"),
+        h("div", null, h("h3", null, "Danke für deine Meinung!"), h("p", null, "Für diese Frage gibt es keine Punkte. Überlege: Welcher Grund ist für dich am wichtigsten?"))));
+      api.finishOpinion();
+    } }, h("span", { class: "em", "aria-hidden": "true" }, o.em), h("span", null, o.t));
+    return b;
+  });
+  add(grid, btns); body.appendChild(grid);
+};
+
+/* =========================================================
+   ABSCHLUSS
+   ========================================================= */
+function showTakeaway() {
+  setAccent(null);
+  var done = h("div", { "aria-live": "polite" });
+  var next = h("div", { class: "btn-row" });
+  var btns = TAKEAWAY.map(function (o) {
+    var b = h("button", { class: "opt", onclick: function () {
+      btns.forEach(function (x) { x.classList.remove("sel"); x.setAttribute("aria-pressed", "false"); });
+      b.classList.add("sel"); b.setAttribute("aria-pressed", "true");
+      done.innerHTML = ""; done.appendChild(h("p", { class: "takeaway-done center" }, "Gute Idee! Das kannst du schon morgen ausprobieren. 🌱"));
+      next.innerHTML = ""; next.appendChild(h("button", { class: "btn big green", onclick: showResult }, "Mein Ergebnis ▶"));
+    } }, emSpan(o.em), h("span", null, o.t));
+    return b;
+  });
+  var spk = Speech.ok ? h("button", { class: "tool", "aria-pressed": "false", "data-label": "Vorlesen", onclick: function () {
+    Speech.speak("Das nehme ich mit. Wähle einen Satz, der zu dir passt. " + TAKEAWAY.map(function (t) { return t.t; }).join(" "), spk);
+  } }, h("span", { class: "ico", "aria-hidden": "true" }, "🔊"), h("span", { class: "lbl" }, "Vorlesen")) : null;
+  var node = h("section", { class: "card" },
+    h("div", { class: "qhead" }, h("span", { class: "chip round" }, "🎒 Zum Schluss"), h("span", { class: "chip sheet" }, "📄 Die ganze Reihe")),
+    h("div", { class: "tools" }, spk),
+    h("h2", { class: "qtext" }, "Das nehme ich mit"),
+    h("p", { style: "margin:0 0 16px;color:var(--muted)" }, "Wähle einen Satz, der zu dir passt. Hier gibt es kein Richtig oder Falsch."),
+    h("div", { class: "opts" }, btns), done, next);
+  screen(node, true);
+}
+
+function starSVG(on) {
+  var d = document.createElement("div");
+  d.innerHTML = '<svg viewBox="0 0 24 24" class="' + (on ? "on" : "") + '" aria-hidden="true"><path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4l-5.8 3.1 1.1-6.5L2.6 9.4l6.5-.9z" fill="' + (on ? "#F4C430" : "#E8DFD0") + '" stroke="' + (on ? "#C99A00" : "#D5C9B5") + '" stroke-width="1.2" stroke-linejoin="round"/></svg>';
+  return d.firstChild;
+}
+function badgeSVG(em, color) {
+  var d = document.createElement("div");
+  d.innerHTML = '<svg class="badge" viewBox="0 0 120 140" aria-hidden="true">' +
+    '<path d="M38 80 L24 132 L44 122 L54 138 L62 90Z" fill="#6B3F24"/>' +
+    '<path d="M82 80 L96 132 L76 122 L66 138 L58 90Z" fill="#14502F"/>' +
+    '<circle cx="60" cy="58" r="50" fill="#F4C430"/><circle cx="60" cy="58" r="42" fill="' + color + '"/>' +
+    '<circle cx="60" cy="58" r="42" fill="none" stroke="#fff" stroke-width="3" stroke-dasharray="4 6" opacity=".7"/>' +
+    '<text x="60" y="74" text-anchor="middle" font-size="44">' + em + '</text></svg>';
+  return d.firstChild;
+}
+
+function showResult() {
+  setAccent(null);
+  var pct = S.score / TOTAL_MAX;
+  var stars = S.score >= 28 ? 3 : S.score >= 18 ? 2 : 1;
+  var badge = stars === 3 ? { n: "Tropen-Profi", em: "🏆", c: "#1E6B45" }
+            : stars === 2 ? { n: "Fair-Detektiv", em: "🔍", c: "#D9661F" }
+            : { n: "Tropen-Entdecker", em: "🌱", c: "#2E8B57" };
+  S.mistakes = [];
+  ROUNDS.forEach(function (r) { r.questions.forEach(function (q) { if (isScored(q) && S.results[q.id] !== 2) S.mistakes.push(q.id); }); });
+  var starRow = h("div", { class: "stars", role: "img", "aria-label": stars + " von 3 Sternen" }, [1, 2, 3].map(function (i) { return starSVG(i <= stars); }));
+  var node = h("section", { class: "card center" },
+    h("div", { class: "round-kicker" }, "Geschafft!"),
+    h("h2", { class: "round-title" }, "Dein Ergebnis"),
+    starRow,
+    h("div", { class: "stat" }, h("b", null, S.score + " / " + TOTAL_MAX), h("span", null, "Punkte")),
+    badgeSVG(badge.em, badge.c),
+    h("div", { class: "badge-name" }, "Abzeichen: " + badge.n),
+    h("p", { class: "motiv" }, stars === 3 ? "Wow! Du kennst dich mit den Tropen, Palmöl und Fairtrade richtig gut aus."
+      : stars === 2 ? "Gut gemacht! Du weißt schon viel über Landwirtschaft in den Tropen."
+      : "Du hast durchgehalten! Mit dem Fehler-Training wirst du noch besser."),
+    h("div", { class: "teacher" }, h("span", { class: "em", "aria-hidden": "true" }, "👩‍🏫"), "Zeig dein Ergebnis deiner Lehrkraft."),
+    endButtons()
+  );
+  screen(node, false);
+  confetti(stars === 3 ? 90 : stars === 2 ? 60 : 40);
+}
+
+function showRepeatEnd() {
+  setAccent(null);
+  var n = S.plan[0].qs.length;
+  var fixed = S.plan[0].qs.filter(function (q) { return S.results[q.id] === 2; }).length;
+  S.mistakes = S.plan[0].qs.filter(function (q) { return S.results[q.id] !== 2; }).map(function (q) { return q.id; });
+  var node = h("section", { class: "card center" },
+    h("div", { class: "round-emoji", "aria-hidden": "true" }, fixed === n ? "🏆" : "💪"),
+    h("h2", { class: "round-title" }, "Fehler-Training geschafft!"),
+    h("div", { class: "stat" }, h("b", null, fixed + " / " + n), h("span", null, "Fragen jetzt beim ersten Versuch richtig")),
+    h("p", { class: "motiv" }, fixed === n ? "Alle Fehler ausgebügelt. Stark!" : "Du wirst immer besser. Übe die restlichen Fragen noch einmal."),
+    h("div", { class: "teacher" }, h("span", { class: "em", "aria-hidden": "true" }, "👩‍🏫"), "Zeig dein Ergebnis deiner Lehrkraft."),
+    endButtons()
+  );
+  screen(node, false);
+  confetti(fixed === n ? 80 : 40);
+}
+
+function endButtons() {
+  var hasMistakes = S.mistakes.length > 0;
+  return h("div", { class: "btn-row" },
+    h("button", { class: "btn big green", onclick: function () { startGame(); } }, "🔄 Nochmal spielen"),
+    h("button", { class: "btn big light", disabled: !hasMistakes, onclick: function () { if (hasMistakes) startRepeat(); } },
+      hasMistakes ? "🎯 Nur meine Fehler wiederholen (" + S.mistakes.length + ")" : "🎯 Keine Fehler – super!")
+  );
+}
+
+/* =========================================================
+   ANIMATIONEN
+   ========================================================= */
+function confetti(n) {
+  if (reduceMotion) return;
+  var colors = ["#1E6B45", "#2E8B57", "#F4C430", "#E3A500", "#6B3F24", "#D9661F", "#1F7FA6"];
+  for (var i = 0; i < n; i++) {
+    var c = document.createElement("div");
+    c.className = "confetti";
+    c.style.left = Math.random() * 100 + "vw";
+    c.style.background = colors[i % colors.length];
+    c.style.animationDuration = (1.8 + Math.random() * 1.6) + "s";
+    c.style.animationDelay = (Math.random() * .4) + "s";
+    c.style.transform = "rotate(" + Math.random() * 360 + "deg)";
+    if (Math.random() < .3) { c.style.borderRadius = "50%"; c.style.height = "12px"; }
+    document.body.appendChild(c);
+    setTimeout((function (el) { return function () { el.remove(); }; })(c), 4200);
+  }
+}
+function plusFloat(text, anchor) {
+  if (reduceMotion || !anchor) return;
+  var r = anchor.getBoundingClientRect();
+  var p = h("div", { class: "plus" }, text);
+  p.style.left = (r.left + r.width / 2 - 20) + "px";
+  p.style.top = (r.top - 10) + "px";
+  document.body.appendChild(p);
+  setTimeout(function () { p.remove(); }, 1100);
+}
+
+showStart();
+</script>
+</body>
+</html>
